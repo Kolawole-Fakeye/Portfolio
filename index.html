@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kolawole Afolabi Fakeye — Analytics Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080b;
+  --s1:#0b0f14;
+  --s2:#0f1419;
+  --border:rgba(255,255,255,0.06);
+  --text:#dde4ed;
+  --muted:#5a6a7d;
+  --cyan:#18e0ff;
+  --cyan-dim:rgba(24,224,255,0.12);
+  --gold:#f0b840;
+  --gold-dim:rgba(240,184,64,0.1);
+  --green:#00e87a;
+  --green-dim:rgba(0,232,122,0.1);
+  --red:#ff4d4d;
+  --purple:#a78bfa;
+  --fd:"Sora",sans-serif;
+  --fm:"JetBrains Mono",monospace;
+  --fs:"Instrument Serif",serif;
+}
+html{font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:"Sora",sans-serif;overflow:hidden;height:100vh;width:100vw}
+
+/* GRAIN */
+body::after{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:5000;opacity:.7}
+
+/* PROGRESS */
+#prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--green));z-index:4000;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* NAV */
+nav{position:fixed;inset:0 0 auto 0;z-index:3000;display:flex;justify-content:space-between;align-items:center;padding:0 3rem;height:64px;background:rgba(6,8,11,0.88);backdrop-filter:blur(24px) saturate(1.5);border-bottom:1px solid var(--border)}
+.nl{font-family:var(--fm);font-size:.78rem;font-weight:600;color:var(--cyan);letter-spacing:.12em}
+.nl span{color:rgba(255,255,255,.2)}
+.nb-row{display:flex}
+.nb{background:none;border:none;font-family:"Sora",sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 1.1rem;height:64px;transition:color .2s;position:relative;cursor:pointer}
+.nb::after{content:"";position:absolute;bottom:0;left:1.1rem;right:1.1rem;height:2px;background:var(--cyan);transform:scaleX(0);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.nb:hover{color:var(--text)}
+.nb.on{color:var(--text)}
+.nb.on::after{transform:scaleX(1)}
+.nav-tag{font-family:var(--fm);font-size:.6rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--green)}50%{opacity:.4;box-shadow:none}}
+
+/* PAGE ENGINE */
+.wrap{position:relative;width:100vw;height:100vh}
+.pg{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-top:64px;opacity:0;pointer-events:none;transform:translateY(16px);transition:opacity .45s cubic-bezier(.4,0,.2,1),transform .45s cubic-bezier(.4,0,.2,1)}
+.pg.on{opacity:1;pointer-events:all;transform:translateY(0)}
+.pg.out{opacity:0;transform:translateY(-16px)}
+
+/* PAGE NAV DOTS */
+.dots{position:fixed;right:1.6rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.7rem;z-index:2000}
+.pd{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.12);border:none;transition:all .3s;padding:0;cursor:pointer}
+.pd.on{background:var(--cyan);height:20px;box-shadow:0 0 8px var(--cyan)}
+
+/* ══ PAGE 1 — HERO ══ */
+#p0{display:block}
+.h-grid{display:grid;grid-template-columns:1fr 1fr;width:100%;height:calc(100vh - 64px)}
+.h-photo{position:relative;overflow:hidden;background:#000;min-height:500px}
+.h-img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(15%) contrast(1.08);opacity:.8;display:block}
+.h-grad{position:absolute;inset:0;background:linear-gradient(to right,rgba(6,8,11,0) 60%,rgba(6,8,11,.9) 100%),linear-gradient(to top,rgba(6,8,11,.7) 0%,transparent 40%)}
+.scan{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--cyan) 50%,transparent 100%);opacity:.5;animation:sc 5s linear infinite}
+@keyframes sc{0%{top:0}100%{top:100%}}
+.corner{position:absolute;width:48px;height:48px;opacity:.5}
+.tl{top:1.2rem;left:1.2rem;border-top:1.5px solid var(--cyan);border-left:1.5px solid var(--cyan)}
+.br{bottom:1.2rem;right:1.2rem;border-bottom:1.5px solid var(--cyan);border-right:1.5px solid var(--cyan)}
+.h-chip{position:absolute;bottom:1.8rem;left:1.8rem;display:flex;align-items:center;gap:.6rem;background:rgba(6,8,11,.85);backdrop-filter:blur(12px);border:1px solid rgba(24,224,255,.2);padding:.55rem 1rem}
+.h-chip-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.h-chip-txt{font-family:var(--fm);font-size:.58rem;color:var(--cyan);letter-spacing:.12em}
+
+.h-body{display:flex;flex-direction:column;justify-content:center;padding:3.5rem 4.5rem;position:relative}
+.h-body::before{content:"";position:absolute;left:0;top:10%;bottom:10%;width:1px;background:linear-gradient(180deg,transparent,var(--cyan),transparent);opacity:.2}
+.h-eye{font-family:var(--fm);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:1.4rem;display:flex;align-items:center;gap:.7rem}
+.h-eye::before{content:"//";color:var(--muted)}
+h1.h-name{font-size:clamp(2.6rem,4.2vw,4rem);font-weight:800;line-height:.92;letter-spacing:-.03em;margin-bottom:.5rem}
+h1.h-name .ln2{color:var(--cyan);display:block}
+.h-role{font-family:var(--fm);font-size:.72rem;color:var(--muted);margin-bottom:2.2rem;letter-spacing:.06em}
+.h-role b{color:var(--cyan);font-weight:500}
+.h-bio{font-size:.85rem;line-height:1.82;color:rgba(221,228,237,.6);max-width:420px;margin-bottom:2.5rem;border-left:2px solid rgba(24,224,255,.25);padding-left:1.1rem}
+.h-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.htag{font-family:var(--fm);font-size:.58rem;padding:.3rem .8rem;border:1px solid rgba(24,224,255,.18);color:var(--cyan);background:rgba(24,224,255,.04);letter-spacing:.06em;transition:all .2s}
+.htag:hover{background:rgba(24,224,255,.1)}
+.h-btns{display:flex;gap:.8rem}
+.btn-p{padding:.75rem 1.8rem;background:var(--cyan);color:#000;font-weight:700;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border:none;transition:all .25s;cursor:pointer}
+.btn-p:hover{background:#4aeeff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(24,224,255,.25)}
+.btn-g{padding:.75rem 1.8rem;background:transparent;color:var(--text);font-weight:600;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);transition:all .25s;cursor:pointer}
+.btn-g:hover{border-color:var(--cyan);color:var(--cyan)}
+.h-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:3rem;border-top:1px solid var(--border);padding-top:1.8rem}
+.hs{text-align:center;padding:0 .8rem;border-right:1px solid var(--border)}
+.hs:last-child{border:none}
+.hs-n{font-size:2rem;font-weight:800;color:var(--cyan);line-height:1;letter-spacing:-.02em}
+.hs-n sup{font-size:.9rem}
+.hs-l{font-family:var(--fm);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:.35rem}
+
+/* ══ PAGE 2 — SKILLS ══ */
+#p1{padding:4.5rem 3rem 3rem;background:var(--bg)}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3.5rem}
+.pt{font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:800;letter-spacing:-.03em;line-height:.9}
+.pt em{color:var(--cyan);font-style:normal;display:block}
+.pn{font-family:var(--fm);font-size:.58rem;color:var(--muted);letter-spacing:.2em;margin-bottom:.7rem}
+.ps{font-size:.78rem;color:var(--muted);max-width:220px;text-align:right;line-height:1.6}
+
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.bc{background:var(--s1);padding:1.8rem;position:relative;overflow:hidden;transition:background .25s}
+.bc:hover{background:var(--s2)}
+.bc::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;transform:scaleX(0);transition:transform .35s;transform-origin:left}
+.bc:hover::before{transform:scaleX(1)}
+.bc.cy::before{background:var(--cyan)}.bc.go::before{background:var(--gold)}.bc.gr::before{background:var(--green)}.bc.pu::before{background:var(--purple)}.bc.rd::before{background:var(--red)}
+.s4{grid-column:span 4}.s3{grid-column:span 3}.s6{grid-column:span 6}.s5{grid-column:span 5}.s7{grid-column:span 7}
+.bi{font-size:1.4rem;margin-bottom:.8rem}
+.bn{font-size:1rem;font-weight:700;margin-bottom:.7rem;letter-spacing:-.01em}
+.bt{display:flex;flex-wrap:wrap;gap:.35rem}
+.tg{font-family:var(--fm);font-size:.56rem;padding:.2rem .55rem;background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border);letter-spacing:.04em;transition:all .2s}
+.tg.c{background:rgba(24,224,255,.07);color:var(--cyan);border-color:rgba(24,224,255,.18)}
+.tg.g{background:var(--gold-dim);color:var(--gold);border-color:rgba(240,184,64,.2)}
+.tg.gr{background:var(--green-dim);color:var(--green);border-color:rgba(0,232,122,.2)}
+.tg.pu{background:rgba(167,139,250,.07);color:var(--purple);border-color:rgba(167,139,250,.2)}
+.bnum{position:absolute;bottom:-.4rem;right:.5rem;font-size:4.5rem;font-weight:800;color:rgba(255,255,255,.025);pointer-events:none;line-height:1}
+
+.tstrip{display:flex;align-items:center;gap:1.8rem;margin-top:1px;background:var(--s1);padding:1.3rem 1.8rem;flex-wrap:wrap;border:1px solid var(--border);border-top:none}
+.tsl{font-family:var(--fm);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.ti{font-family:var(--fm);font-size:.65rem;color:rgba(221,228,237,.4);border:1px solid var(--border);padding:.35rem .9rem;transition:all .2s;white-space:nowrap}
+.ti:hover{color:var(--cyan);border-color:rgba(24,224,255,.35)}
+
+/* ══ PAGE 3 — PORTFOLIO ══ */
+#p2{padding:4.5rem 3rem 3rem;background:var(--bg)}
+.pgrid{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);margin-top:3.5rem}
+.pc{display:grid;grid-template-columns:90px 1fr 40px;gap:2rem;align-items:start;padding:2.2rem 2.5rem;background:var(--s1);position:relative;overflow:hidden;transition:background .25s;text-decoration:none;color:inherit}
+.pc:hover{background:var(--s2)}
+.pc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;transform:scaleY(0);transition:transform .3s;transform-origin:top}
+.pc:hover::before{transform:scaleY(1)}
+.pc.cy::before{background:var(--cyan)}.pc.go::before{background:var(--gold)}.pc.gr::before{background:var(--green)}.pc.pu::before{background:var(--purple)}
+.pidx{font-family:var(--fm);font-size:.58rem;color:var(--muted);letter-spacing:.1em;padding-top:.25rem}
+.pdom{font-family:var(--fm);font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:.4rem}
+.ptit{font-size:1.25rem;font-weight:700;margin-bottom:.6rem;letter-spacing:-.01em;line-height:1.2}
+.pdsc{font-size:.8rem;line-height:1.7;color:var(--muted);max-width:560px;margin-bottom:1rem}
+.pstk{display:flex;flex-wrap:wrap;gap:.4rem}
+.sb{font-family:var(--fm);font-size:.56rem;padding:.18rem .6rem;letter-spacing:.04em}
+.sb.p{background:var(--cyan);color:#000;font-weight:600}
+.sb.s{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
+.parr{font-size:1rem;color:var(--border);padding-top:.2rem;transition:all .25s}
+.pc:hover .parr{color:var(--cyan);transform:translate(3px,-3px)}
+
+/* ENGINE FEATURE */
+.efeat{margin-top:1px;background:var(--s1);border:1px solid var(--border);border-top:none;padding:2.5rem}
+.efeat-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem}
+.ek{font-family:var(--fm);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.et{font-size:1.3rem;font-weight:700;letter-spacing:-.01em}
+.emeta{font-family:var(--fm);font-size:.58rem;color:var(--muted);text-align:right;line-height:1.7}
+.egrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.ec{background:var(--s2);padding:1.8rem;position:relative;overflow:hidden;transition:background .25s}
+.ec:hover{background:rgba(24,224,255,.03)}
+.ea{position:absolute;top:0;left:0;right:0;height:2px}
+.ec:nth-child(1) .ea{background:linear-gradient(90deg,var(--cyan),transparent)}
+.ec:nth-child(2) .ea{background:linear-gradient(90deg,var(--red),transparent)}
+.ec:nth-child(3) .ea{background:linear-gradient(90deg,var(--gold),transparent)}
+.eico{font-size:1.5rem;margin-bottom:.8rem}
+.etit{font-size:.95rem;font-weight:700;margin-bottom:.5rem}
+.edsc{font-size:.75rem;line-height:1.65;color:var(--muted)}
+.etags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.8rem}
+.etags span{font-family:var(--fm);font-size:.54rem;padding:.18rem .5rem;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+
+/* ══ PAGE 4 — EXPERIENCE ══ */
+#p3{padding:4.5rem 3rem 3rem;background:var(--bg);display:grid;grid-template-columns:300px 1fr;gap:4rem;min-height:calc(100vh - 64px);align-items:start}
+.esb{}
+.esb-bio{font-size:.82rem;line-height:1.82;color:var(--muted);margin-top:1.8rem;padding-top:1.8rem;border-top:1px solid var(--border)}
+.cst{margin-top:2rem;display:flex;flex-direction:column;gap:.6rem}
+.cl{display:flex;align-items:center;gap:.7rem;font-family:var(--fm);font-size:.63rem;color:var(--muted);text-decoration:none;padding:.6rem .9rem;border:1px solid var(--border);transition:all .2s}
+.cl:hover{border-color:rgba(24,224,255,.35);color:var(--cyan);background:rgba(24,224,255,.04)}
+.ci{color:var(--cyan);font-size:.85rem;flex-shrink:0}
+.clb .cll{font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.1rem}
+.clb .clv{color:var(--text);font-size:.6rem}
+
+.tl-wrap{position:relative;padding-left:1.8rem}
+.tl-wrap::before{content:"";position:absolute;left:6px;top:8px;bottom:0;width:1px;background:linear-gradient(180deg,var(--cyan),rgba(24,224,255,.05))}
+.tli{position:relative;margin-bottom:2rem}
+.tld{position:absolute;left:-1.8rem;top:5px;width:13px;height:13px;border:2px solid var(--cyan);border-radius:50%;background:var(--bg);z-index:1;transition:background .2s}
+.tli:hover .tld{background:var(--cyan)}
+.tlb{background:var(--s1);border:1px solid var(--border);padding:1.6rem;transition:border-color .25s}
+.tli:hover .tlb{border-color:rgba(24,224,255,.2)}
+.tlp{font-family:var(--fm);font-size:.56rem;letter-spacing:.1em;color:var(--muted);margin-bottom:.4rem}
+.tlc{font-size:1rem;font-weight:700;margin-bottom:.18rem;letter-spacing:-.01em}
+.tlr{font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.7rem}
+.tlpts{list-style:none}
+.tlpts li{font-size:.77rem;line-height:1.65;color:var(--muted);margin-bottom:.35rem;padding-left:1.1rem;position:relative}
+.tlpts li::before{content:"›";position:absolute;left:0;color:var(--cyan);line-height:1.3}
+
+/* ══ PAGE 5 — CONTACT ══ */
+#p4{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 64px);background:var(--bg)}
+.cl-side{padding:4.5rem 4rem;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border)}
+.bcta{font-size:clamp(1.8rem,3.5vw,3rem);font-weight:800;line-height:.95;letter-spacing:-.03em;margin-bottom:1.2rem}
+.bcta em{color:var(--cyan);font-style:normal;display:block}
+.csub{font-size:.82rem;line-height:1.8;color:var(--muted);max-width:360px;margin-bottom:2.5rem}
+.ccs{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border)}
+.cc{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;background:var(--s1);text-decoration:none;transition:all .22s}
+.cc:hover{background:var(--s2);padding-left:2rem}
+.cct{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.18rem}
+.ccv{font-family:var(--fm);font-size:.66rem;color:var(--text)}
+.cca{color:var(--muted);font-size:.9rem;transition:all .2s}
+.cc:hover .cca{color:var(--cyan);transform:translateX(4px)}
+
+.cr-side{padding:4.5rem 4rem;display:flex;flex-direction:column;justify-content:center;background:var(--s1)}
+.edu-lbl{font-family:var(--fm);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.8rem}
+.edu-e{margin-bottom:2.2rem;padding-bottom:2.2rem;border-bottom:1px solid var(--border)}
+.edu-e:last-of-type{border-bottom:none}
+.edu-d{font-size:1.2rem;font-weight:700;margin-bottom:.3rem;line-height:1.2}
+.edu-s{font-size:.7rem;color:var(--gold);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.edu-y{font-family:var(--fm);font-size:.58rem;color:var(--muted)}
+.nysc{display:inline-flex;align-items:center;gap:.55rem;margin-top:1.2rem;padding:.5rem 1rem;border:1px solid rgba(0,232,122,.2);background:rgba(0,232,122,.05);font-family:var(--fm);font-size:.6rem;color:var(--green);letter-spacing:.08em}
+.comp{margin-top:2.5rem}
+.comp-l{font-family:var(--fm);font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem}
+.comp-g{display:flex;flex-wrap:wrap;gap:.4rem}
+.ci2{font-family:var(--fm);font-size:.58rem;padding:.25rem .7rem;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+.ci2:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* FOOTER */
+footer{background:#030406;padding:1.2rem 3rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+.fn{font-family:var(--fm);font-size:.58rem;letter-spacing:.12em;color:rgba(255,255,255,.18)}
+.fno{font-family:var(--fm);font-size:.54rem;color:rgba(255,255,255,.1)}
+
+/* ANIM */
+@keyframes fiu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.pg.on .a{animation:fiu .55s cubic-bezier(.4,0,.2,1) forwards;opacity:0}
+.pg.on .d1{animation-delay:.08s}.pg.on .d2{animation-delay:.18s}.pg.on .d3{animation-delay:.28s}
+.pg.on .d4{animation-delay:.38s}.pg.on .d5{animation-delay:.48s}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .h-grid{grid-template-columns:1fr}
+  .h-photo{height:55vw}
+  .h-body{padding:2rem 1.8rem}
+  #p3{grid-template-columns:1fr}
+  #p4{grid-template-columns:1fr}
+  .bento .s4,.bento .s3,.bento .s5,.bento .s7{grid-column:span 6}
+  .bento .s6{grid-column:span 12}
+  #p1,#p2,#p3,#p4{padding:4rem 1.5rem 2rem}
+  nav{padding:0 1.5rem}
+}
+@media(max-width:620px){
+  .bento .s4,.bento .s3,.bento .s5,.bento .s7,.bento .s6{grid-column:span 12}
+  .nb-row{display:none}
+  .egrid{grid-template-columns:1fr}
+  .pc{grid-template-columns:50px 1fr}
+  .parr{display:none}
+  .dots{display:none}
+  #p0 .h-stats{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<nav>
+  <div class="nl">KAF<span>://</span>v3</div>
+  <div class="nb-row">
+    <button class="nb on" onclick="go(0)">Home</button>
+    <button class="nb" onclick="go(1)">Skills</button>
+    <button class="nb" onclick="go(2)">Portfolio</button>
+    <button class="nb" onclick="go(3)">Experience</button>
+    <button class="nb" onclick="go(4)">Contact</button>
+  </div>
+  <div class="nav-tag"><div class="live-dot"></div>Open to Opportunities</div>
+</nav>
+
+<div class="dots">
+  <button class="pd on" onclick="go(0)" title="Home"></button>
+  <button class="pd" onclick="go(1)" title="Skills"></button>
+  <button class="pd" onclick="go(2)" title="Portfolio"></button>
+  <button class="pd" onclick="go(3)" title="Experience"></button>
+  <button class="pd" onclick="go(4)" title="Contact"></button>
+</div>
+
+<div class="wrap">
+
+<!-- ══ PAGE 0 — HOME ══ -->
+<div class="pg on" id="p0">
+  <div class="h-grid">
+    <div class="h-photo a d1">
+      <svg class="h-img" viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" style="background:#0b0f14; width:100%; height:100%; object-fit:cover;">
+        <defs>
+          <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0b0f14"/>
+            <stop offset="100%" stop-color="#18e0ff" stop-opacity="0.15"/>
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <circle cx="250" cy="220" r="100" stroke="#18e0ff" stroke-width="1" stroke-opacity="0.3" fill="none"/>
+        <circle cx="250" cy="220" r="140" stroke="#18e0ff" stroke-width="1" stroke-opacity="0.1" fill="none"/>
+        <path d="M 0,150 L 500,150 M 0,300 L 500,300 M 0,450 L 500,450 M 125,0 L 125,600 M 250,0 L 250,600 M 375,0 L 375,600" stroke="rgba(24,224,255,0.05)" stroke-width="1"/>
+        <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="#18e0ff" opacity="0.6">&lt; ANALYTICS_ENGINEER /&gt;</text>
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="'Instrument Serif', serif" font-size="36" font-style="italic" fill="#f0b840" opacity="0.8">Kolawole A. Fakeye</text>
+      </svg>
+      <div class="h-grad"></div>
+      <div class="scan"></div>
+      <div class="corner tl"></div>
+      <div class="corner br"></div>
+      <div class="h-chip">
+        <div class="h-chip-dot"></div>
+        <div class="h-chip-txt">SYSTEM_ACTIVE // 2026</div>
+      </div>
+    </div>
+    <div class="h-body">
+      <div class="h-eye a d2">System Overview</div>
+      <h1 class="h-name a d2">Kolawole<span class="ln2">Afolabi Fakeye</span></h1>
+      <div class="h-role a d3">Analytics Engineer &amp; <b>Backend Specialist</b></div>
+      <div class="h-bio a d3">Bridging the gap between raw data pipelines, complex relational database architectures, and high-performance backend infrastructures. Over 15 years of technical expertise resolving intricate data workflows.</div>
+      <div class="h-tags a d4">
+        <span class="htag">SQL Querying</span>
+        <span class="htag">Excel Analytics</span>
+        <span class="htag">ETL Pipelines</span>
+        <span class="htag">Python</span>
+        <span class="htag">Systems Engineering</span>
+      </div>
+      <div class="h-btns a d4">
+        <button class="btn-p" onclick="go(2)">View Projects</button>
+        <button class="btn-g" onclick="go(4)">Get In Touch</button>
+      </div>
+      <div class="h-stats a d5">
+        <div class="hs">
+          <div class="hs-n">15<sup>+</sup></div>
+          <div class="hs-l">Years Exp</div>
+        </div>
+        <div class="hs">
+          <div class="hs-n">100%</div>
+          <div class="hs-l">Data Integrity</div>
+        </div>
+        <div class="hs">
+          <div class="hs-n">2026</div>
+          <div class="hs-l">Active Node</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 1 — SKILLS ══ -->
+<div class="pg" id="p1">
+  <div class="ph a d1">
+    <div>
+      <div class="pn">COGNITIVE MATRIX</div>
+      <h2 class="pt">Technical <em>Arsenal</em></h2>
+    </div>
+    <div class="ps">Multi-disciplinary skillset optimized for complex analytical pipelines, structural logic, and server operations.</div>
+  </div>
+
+  <div class="bento a d2">
+    <!-- SQL Block -->
+    <div class="bc cy s6">
+      <div class="bi">⚡</div>
+      <div class="bn">SQL &amp; Database Architecture</div>
+      <div class="bt">
+        <span class="tg c">PostgreSQL</span>
+        <span class="tg c">MySQL</span>
+        <span class="tg c">Query Tuning</span>
+        <span class="tg">Schema Modeling</span>
+        <span class="tg">Relational DBs</span>
+      </div>
+      <div class="bnum">01</div>
+    </div>
+
+    <!-- Analytics Block -->
+    <div class="bc go s6">
+      <div class="bi">📈</div>
+      <div class="bn">Analytics &amp; Business Intelligence</div>
+      <div class="bt">
+        <span class="tg g">Advanced Excel</span>
+        <span class="tg g">Power Query</span>
+        <span class="tg g">VBA Automation</span>
+        <span class="tg">Financial Modeling</span>
+        <span class="tg">Dashboarding</span>
+      </div>
+      <div class="bnum">02</div>
+    </div>
+
+    <!-- Systems Block -->
+    <div class="bc gr s4">
+      <div class="bi">⚙️</div>
+      <div class="bn">Systems Engineering</div>
+      <div class="bt">
+        <span class="tg gr">IT Infrastructure</span>
+        <span class="tg gr">Network Setups</span>
+        <span class="tg">Hardware Security</span>
+        <span class="tg">SysAdmin</span>
+      </div>
+      <div class="bnum">03</div>
+    </div>
+
+    <!-- Backend Block -->
+    <div class="bc pu s5">
+      <div class="bi">🐍</div>
+      <div class="bn">Backend Specialist</div>
+      <div class="bt">
+        <span class="tg pu">Python</span>
+        <span class="tg pu">API Integration</span>
+        <span class="tg">Logic Workflows</span>
+        <span class="tg">Scripting</span>
+      </div>
+      <div class="bnum">04</div>
+    </div>
+
+    <!-- Business Ops Block -->
+    <div class="bc rd s3">
+      <div class="bi">🎯</div>
+      <div class="bn">Operations Strategy</div>
+      <div class="bt">
+        <span class="tg rd">Inventory Forecasting</span>
+        <span class="tg">Cost Tracking</span>
+      </div>
+      <div class="bnum">05</div>
+    </div>
+  </div>
+
+  <div class="tstrip a d3">
+    <div class="tsl">Integrated Tech Stack //</div>
+    <div class="ti">SQL Server</div>
+    <div class="ti">PostgreSQL</div>
+    <div class="ti">Power BI</div>
+    <div class="ti">Python</div>
+    <div class="ti">Linux Server Bash</div>
+    <div class="ti">Advanced Excel VBA</div>
+  </div>
+</div>
+
+<!-- ══ PAGE 2 — PORTFOLIO ══ -->
+<div class="pg" id="p2">
+  <div class="ph a d1">
+    <div>
+      <div class="pn">DEPLOYED ARCHITECTURES</div>
+      <h2 class="pt">Featured <em>Projects</em></h2>
+    </div>
+    <div class="ps">Selected data models, backend structures, and analytical designs engineered for high integrity.</div>
+  </div>
+
+  <div class="pgrid a d2">
+    <!-- Project 1 -->
+    <div class="pc cy" onclick="go(4)">
+      <div class="pidx">01 / PIPELINE</div>
+      <div>
+        <div class="pdom" style="color:var(--cyan)">Data Analytics &amp; SQL</div>
+        <h3 class="ptit">NYC Hospital Performance Dashboard</h3>
+        <p class="pdsc">An analytical system and pipeline tracking patient load, staff allocation, and operational processing efficiency. Aggregates and cleans complex mock hospital structures into highly indexed PostgreSQL schemas for clean BI dashboarding.</p>
+        <div class="pstk">
+          <span class="sb p">SQL Queries</span>
+          <span class="sb s">Power Query</span>
+          <span class="sb s">Excel Analytics</span>
+          <span class="sb s">Schema Design</span>
+        </div>
+      </div>
+      <div class="parr">↗</div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="pc go" onclick="go(4)">
+      <div class="pidx">02 / MATHEMATICAL ENGINE</div>
+      <div>
+        <div class="pdom" style="color:var(--gold)">Financial Modeling</div>
+        <h3 class="ptit">"BillionaireBusiness" Simulation Model</h3>
+        <p class="pdsc">A robust mathematical and logic-driven blueprint built for a mobile-first financial strategy game. Formulates compound interest engines, asset valuation growth, operational logistics, and venture tracking algorithms.</p>
+        <div class="pstk">
+          <span class="sb p">Excel VBA</span>
+          <span class="sb s">System Logic</span>
+          <span class="sb s">Financial Algebra</span>
+          <span class="sb s">Compounding Engines</span>
+        </div>
+      </div>
+      <div class="parr">↗</div>
+    </div>
+  </div>
+
+  <!-- Specialized Hub Details -->
+  <div class="efeat a d3">
+    <div class="efeat-top">
+      <div>
+        <div class="ek">CORE SPECIALIZATION</div>
+        <h3 class="et">Data &amp; Systems Engineering Hub</h3>
+      </div>
+      <div class="emeta">
+        SYSTEM STATUS: ONLINE<br>
+        NODE: MOROGBO_AGBARA // LAGOS
+      </div>
+    </div>
+    <div class="egrid">
+      <div class="ec">
+        <div class="ea"></div>
+        <div class="eico" style="color:var(--cyan)">🗄️</div>
+        <div class="etit">Database Optimization</div>
+        <div class="edsc">Refactoring slow queries using advanced joins, subqueries, CTEs, and careful index planning for performant data access.</div>
+        <div class="etags">
+          <span>PostgreSQL</span>
+          <span>Query Tuning</span>
+        </div>
+      </div>
+      <div class="ec">
+        <div class="ea"></div>
+        <div class="eico" style="color:var(--red)">⚙️</div>
+        <div class="etit">ETL Flow Automation</div>
+        <div class="edsc">Consolidating manual inputs, raw CSV streams, and disjointed database schemas into unified automation frameworks.</div>
+        <div class="etags">
+          <span>Excel VBA</span>
+          <span>Power Query</span>
+        </div>
+      </div>
+      <div class="ec">
+        <div class="ea"></div>
+        <div class="eico" style="color:var(--gold)">💡</div>
+        <div class="etit">Systems Architecture</div>
+        <div class="edsc">Configuring network infrastructure, configuring hardware setups, maintaining system security, and maintaining local servers.</div>
+        <div class="etags">
+          <span>Networking</span>
+          <span>Systems Eng</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 3 — EXPERIENCE ══ -->
+<div class="pg" id="p3">
+  <div class="esb a d1">
+    <div class="pn">CAREER TRAJECTORY</div>
+    <h2 class="pt">Professional <em>Journey</em></h2>
+    <p class="esb-bio">Over 15 years balancing core systems engineering, administrative operational management, and data intelligence frameworks. Built on the core principle of structural integrity and automation.</p>
+    
+    <div class="cst">
+      <a href="mailto:kolawole.afolabi.fakeye@gmail.com" class="cl">
+        <div class="ci">✉️</div>
+        <div class="clb">
+          <span class="cll">Secure Email</span>
+          <span class="clv">kolawole.afolabi.fakeye@gmail.com</span>
+        </div>
+      </a>
+      <a href="tel:08083161190" class="cl">
+        <div class="ci">📞</div>
+        <div class="clb">
+          <span class="cll">Direct Line</span>
+          <span class="clv">08083161190</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="tl-wrap a d2">
+    <!-- Role 1 -->
+    <div class="tli">
+      <div class="tld"></div>
+      <div class="tlb">
+        <div class="tlp">2026 — PRESENT</div>
+        <h3 class="tlc">Analytics Engineer &amp; Backend Specialist</h3>
+        <div class="tlr">Freelance &amp; Consultant Operations</div>
+        <ul class="tlpts">
+          <li>Architecting complex SQL relational schemas, database structures, and query optimizations.</li>
+          <li>Designing complex operational modeling algorithms, including the financial blueprints for <i>BillionaireBusiness</i>.</li>
+          <li>Developing customized ETL processes to automate data consolidation and cleansing from fragmented spreadsheets into clean relational databases.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Role 2 -->
+    <div class="tli">
+      <div class="tld"></div>
+      <div class="tlb">
+        <div class="tlp">2020 — 2025</div>
+        <h3 class="tlc">Operations &amp; Business Strategy Manager</h3>
+        <div class="tlr">Private Bakery Venture</div>
+        <ul class="tlpts">
+          <li>Supervised supply chain operations, pricing models, inventory logistics, and operational margins.</li>
+          <li>Built Excel analytics pipelines to trace production metrics, forecast consumer demand, and minimize waste.</li>
+          <li>Maintained and troubleshoot retail point-of-sale hardware and back-office administrative reporting infrastructure.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Role 3 -->
+    <div class="tli">
+      <div class="tld"></div>
+      <div class="tlb">
+        <div class="tlp">2015 — 2020</div>
+        <h3 class="tlc">Personal Assistant to the Director General</h3>
+        <div class="tlr">Obafemi Awolowo Institute of Government &amp; Public Policy</div>
+        <ul class="tlpts">
+          <li>Oversaw administrative workflows, critical executive research reporting, and high-stakes organizational coordination.</li>
+          <li>Configured internal office IT systems, secured document databases, and coordinated operational communications across divisions.</li>
+          <li>Compiled operational audits and executive analytics tracking institutional effectiveness.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Role 4 -->
+    <div class="tli">
+      <div class="tld"></div>
+      <div class="tlb">
+        <div class="tlp">2005 — 2015</div>
+        <h3 class="tlc">Systems &amp; IT Engineer</h3>
+        <div class="tlr">Enterprise Infrastructure Consultant</div>
+        <ul class="tlpts">
+          <li>Consulted on over a decade of local networking, server configurations, operating system optimization, and database repairs.</li>
+          <li>Formulated recovery procedures, database backup policies, and internal cybersecurity safeguards.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 4 — CONTACT ══ -->
+<div class="pg" id="p4">
+  <div class="cl-side a d1">
+    <div class="pn">GET IN TOUCH</div>
+    <h2 class="bcta">Let's build<br><em>something great</em></h2>
+    <p class="csub">Ready to deploy highly optimized database models, clean up sluggish data routines, or configure robust system networks? Reach out directly.</p>
+    
+    <div class="ccs">
+      <a href="mailto:kolawole.afolabi.fakeye@gmail.com" class="cc">
+        <div>
+          <div class="cct">Email Address</div>
+          <div class="ccv">kolawole.afolabi.fakeye@gmail.com</div>
+        </div>
+        <div class="cca">➔</div>
+      </a>
+      <a href="tel:08083161190" class="cc">
+        <div>
+          <div class="cct">Phone Line</div>
+          <div class="ccv">08083161190</div>
+        </div>
+        <div class="cca">➔</div>
+      </a>
+      <div class="cc" style="cursor:default;">
+        <div>
+          <div class="cct">Operational Hub</div>
+          <div class="ccv">Morogbo-Agbara, Lagos, Nigeria</div>
+        </div>
+        <div class="cca" style="color:var(--green)">●</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cr-side a d2">
+    <div class="edu-lbl">Academic Matrix</div>
+    <div class="edu-e">
+      <div class="edu-s">Bachelor of Science (B.Sc.)</div>
+      <div class="edu-d">Electronic &amp; Computer Engineering</div>
+      <div class="edu-y">Lagos State University (LASU) // Class of 2004</div>
+    </div>
+
+    <div>
+      <div class="nysc">
+        <span class="live-dot" style="background:var(--green)"></span>
+        NYSC COMPLETED // 2009 - 2010
+      </div>
+    </div>
+
+    <div class="comp">
+      <div class="comp-l">Core Proficiencies Summary</div>
+      <div class="comp-g">
+        <span class="ci2">SQL Query Optimization</span>
+        <span class="ci2">Excel Power Query</span>
+        <span class="ci2">VBA &amp; Macro Automation</span>
+        <span class="ci2">Relational Modeling</span>
+        <span class="ci2">Systems Administration</span>
+        <span class="ci2">Network Security</span>
+        <span class="ci2">ETL Engineering</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div> <!-- End Wrap -->
+
+<footer>
+  <div class="fn">© 2026 Kolawole Afolabi Fakeye. All rights reserved.</div>
+  <div class="fno">KAF_SYS_V3.0.0_PRODUCTION</div>
+</footer>
+
+<script>
+let cur = 0;
+const pgs = document.querySelectorAll('.pg');
+const nbs = document.querySelectorAll('.nb');
+const pds = document.querySelectorAll('.pd');
+const prog = document.getElementById('prog');
+
+// Setup Initial state
+prog.style.width = '0%';
+
+function go(idx) {
+  if (idx === cur) return;
+
+  // Set top progress bar width
+  prog.style.width = (idx * 25) + '%';
+
+  // Handle exiting page transition states
+  pgs[cur].classList.remove('on');
+  pgs[cur].classList.add('out');
+  
+  const prev = cur;
+  setTimeout(() => {
+    pgs[prev].classList.remove('out');
+  }, 450); // Matches .45s transition in CSS
+
+  // Handle entering page states
+  pgs[idx].classList.add('on');
+
+  // Update navbar anchors
+  nbs.forEach((nb, i) => {
+    if (i === idx) nb.classList.add('on');
+    else nb.classList.remove('on');
+  });
+
+  // Update right side bullet indicators
+  pds.forEach((pd, i) => {
+    if (i === idx) pd.classList.add('on');
+    else pd.classList.remove('on');
+  });
+
+  cur = idx;
+}
+</script>
+</body>
+</html>
